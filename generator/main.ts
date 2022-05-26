@@ -35,9 +35,9 @@ for (const module of modules) {
     properties:
       // deno-lint-ignore no-explicit-any
       module.parameters.map((v: any) => ({
-        name: resolveIdentifier(v.name),
+        name: resolveIdentifier(`${module.prefix || ""}${v.name}`),
         type: resolveType(v.type),
-        hasQuestionToken: Boolean(v.required),
+        hasQuestionToken: v.required == undefined,
       })),
   });
 }
