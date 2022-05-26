@@ -1,4 +1,4 @@
-# Deno <> MediWiki
+# Deno <> MediaWiki
 
 > Modules for interacting with MediaWiki using Deno.
 
