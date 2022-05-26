@@ -7,6 +7,7 @@ const source = new Project().createSourceFile(
   path.join(
     path.dirname(path.fromFileUrl(import.meta.url)),
     "..",
+    "mwb",
     "requests.ts",
   ),
 );
