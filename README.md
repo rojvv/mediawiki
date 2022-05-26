@@ -2,7 +2,7 @@
 
 > Modules for interacting with MediaWiki using Deno.
 
-- [mwb](./mwb) - The Deno MediaWiki API wrapper
+- [API](./api) - The Deno MediaWiki API wrapper
 
 ## Feedback
 
