@@ -30,7 +30,7 @@ const { paraminfo: { modules } } = await (await fetch(
 for (const module of modules) {
   source.addInterface({
     isExported: true,
-    name: `Params${resolveIdentifier(module.name),true}`,
+    name: `Params${resolveIdentifier(module.name, true)}`,
     extends: ["Params"],
     properties:
       // deno-lint-ignore no-explicit-any
@@ -56,15 +56,16 @@ for (const module of modules) {
     parameters: [
       {
         name: "params",
-        type: `Params${resolveIdentifier(module.name),true}`,
+        type: `Params${resolveIdentifier(module.name, true)}`,
       },
     ],
-    returnType: `Request<Params${resolveIdentifier(module.name),true}>`,
-  }).setBodyText(
-    `return [${
-      module.mustbeposted != undefined
-    }, { ...params, action: "${module.name}" }];`,
-  );
+    returnType: `Request<Params${resolveIdentifier(module.name, true)}>`,
+    statements: [
+      `return [${
+        module.mustbeposted != undefined
+      }, { ...params, action: "${module.name}" }];`,
+    ],
+  });
 }
 
 await source.save();
