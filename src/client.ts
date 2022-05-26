@@ -6,14 +6,15 @@ import {
 
 import type { Request } from "./requests.ts";
 
-export class BaseClient {
+export class Client {
   private fetch: typeof fetch;
 
   /**
    * @param site The root URL of the MediaWiki site.
    */
-  constructor(public site: string | URL, public readonly headers?: Headers) {
+  constructor(public site: string | URL, private headers?: Headers) {
     const cookie = headers?.get("cookie");
+    this.headers?.delete('cookie')
     this.fetch = wrapFetch({
       cookieJar: cookie != undefined
         ? new CookieJar([Cookie.from(cookie)])
