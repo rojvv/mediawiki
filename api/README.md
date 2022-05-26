@@ -1,4 +1,4 @@
-# MWB [![](https://shield.deno.dev/x/grammy)](https://deno.land/x/grammy)
+# API [![](https://shield.deno.dev/x/grammy)](https://deno.land/x/grammy)
 
 > A MediaWiki API wrapper with TypeScript type declarations.
 
@@ -7,10 +7,10 @@
 Seaching in English Wikipedia for a phrase is as simple as:
 
 ```ts
-import * as mwb from "https://deno.land/x/mwb/mod.ts";
+import * as api from "https://deno.land/x/mediawiki/api/mod.ts";
 
-await new mwb.Client("https://en.wikipedia.org").invoke(
-  mwb.query({ list: "search", srsearch: "Hello" })
+await new api.Client("https://en.wikipedia.org").invoke(
+  api.query({ list: "search", srsearch: "Hello" })
 );
 ```
 
