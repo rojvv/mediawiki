@@ -13,9 +13,10 @@ export function resolveType(type: string) {
   return "string";
 }
 
-export function resolveIdentifier(name: string) {
-  if (["do", "delete", "import"].includes(name)) {
-    return `${name}_`;
-  }
-  return name.replace(/\-/g, "_");
+export function resolveIdentifier(name: string, toUpperCase?: boolean) {
+  return (toUpperCase ? name[0].toUpperCase() : name[0]) +
+    name.replace(/\-/g, "_").slice(1).replace(
+      /-([a-z])/g,
+      (_, g) => g.toUpperCase(),
+    );
 }
