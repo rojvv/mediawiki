@@ -1,6 +1,7 @@
 import {
   assert,
   assertInstanceOf,
+  assertEquals,
 } from "https://deno.land/std@0.140.0/testing/asserts.ts";
 
 import { cleanEnv, str } from "https://deno.land/x/envalid@v0.0.3/mod.ts";
@@ -12,6 +13,28 @@ const env = cleanEnv(Deno.env.toObject(), {
   USERNAME: str(),
   LGNAME: str(),
   LGPASSWORD: str(),
+});
+
+Deno.test("API url", async () => {
+  { // Wikipedia
+    const client = new Client("https://www.wikipedia.org");
+    const url = client['apiUrl'];
+    assertEquals(url, "https://www.wikipedia.org/w/api.php");
+  }
+
+  { // Fandom
+    { // With pathname of index page
+      const client = new Client("https://youtube.fandom.com/wiki/YouTube_Wiki");
+      const url = client['apiUrl'];
+      assertEquals(url, "https://youtube.fandom.com/api.php");
+    }
+    { // Without pathname
+      const client = new Client("https://harrypotter.fandom.com/");
+      const url = client['apiUrl'];
+      assertEquals(url, "https://harrypotter.fandom.com/api.php");
+    }
+  }
+
 });
 
 Deno.test("search", async () => {
