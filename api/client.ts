@@ -2,7 +2,7 @@ import {
   Cookie,
   CookieJar,
   wrapFetch,
-} from "https://deno.land/x/another_cookiejar@v4.1.4/mod.ts";
+} from "https://deno.land/x/another_cookiejar@v5.0.3/mod.ts";
 
 import type { Request } from "./requests.ts";
 
