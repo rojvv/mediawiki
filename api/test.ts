@@ -2,10 +2,10 @@ import {
   assert,
   assertEquals,
   assertInstanceOf,
-} from "https://deno.land/std@0.140.0/testing/asserts.ts";
+} from "https://deno.land/std@0.178.0/testing/asserts.ts";
 
-import { cleanEnv, str } from "https://deno.land/x/envalid@v0.0.3/mod.ts";
-import "https://deno.land/x/dotenv@v3.2.0/load.ts";
+import { cleanEnv, str } from "https://deno.land/x/envalid@0.1.2/mod.ts";
+import "https://deno.land/std@0.178.0/dotenv/load.ts";
 
 import { Client, edit, login, query } from "./mod.ts";
 
@@ -15,7 +15,7 @@ const env = cleanEnv(Deno.env.toObject(), {
   LGPASSWORD: str(),
 });
 
-Deno.test("API url", async () => {
+Deno.test("API url", () => {
   { // Wikipedia
     const client = new Client("https://www.wikipedia.org");
     const url = client["apiUrl"];
