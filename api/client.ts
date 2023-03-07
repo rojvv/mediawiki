@@ -14,7 +14,7 @@ export class Client {
    */
   constructor(public site: string | URL, private headers?: Headers) {
     const cookie = headers?.get("cookie");
-    this.headers?.delete('cookie')
+    this.headers?.delete("cookie");
     this.fetch = wrapFetch({
       cookieJar: cookie != undefined
         ? new CookieJar([Cookie.from(cookie)])
@@ -23,9 +23,9 @@ export class Client {
   }
 
   private get apiUrl() {
-    const url = (this.site instanceof URL ? this.site : new URL(this.site));
+    const url = this.site instanceof URL ? this.site : new URL(this.site);
     if (url.hostname.match(/^[a-zA-Z0-9\-_]+\.fandom\.com$/)) { // Support Fandom
-      url.pathname = "api.php"
+      url.pathname = "api.php";
     } else {
       url.pathname = "w/api.php";
     }
