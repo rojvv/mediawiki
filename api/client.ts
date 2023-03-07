@@ -24,7 +24,11 @@ export class Client {
 
   private get apiUrl() {
     const url = (this.site instanceof URL ? this.site : new URL(this.site));
-    url.pathname += "w/api.php";
+    if (url.hostname.match(/^[a-zA-Z0-9\-_]+\.fandom\.com$/)) { // Support Fandom
+      url.pathname = "api.php"
+    } else {
+      url.pathname = "w/api.php";
+    }
     return url.toString();
   }
 
