@@ -1,18 +1,20 @@
-import * as path from "https://deno.land/std@0.140.0/path/mod.ts";
+import * as path from "https://deno.land/std@0.178.0/path/mod.ts";
 
-import { Project } from "https://deno.land/x/ts_morph@15.0.0/mod.ts";
+import { Project } from "https://deno.land/x/ts_morph@17.0.1/mod.ts";
 import { resolveIdentifier, resolveType } from "./utils.ts";
 
 const source = new Project().createSourceFile(
   path.join(
     path.dirname(path.fromFileUrl(import.meta.url)),
     "..",
-    "src",
+    "api",
     "requests.ts",
   ),
+  undefined,
+  { overwrite: true },
 );
 
-source.addStatements(["// deno-lint-ignore-file"]);
+source.addStatements(["// deno-fmt-ignore-file", "// deno-lint-ignore-file"]);
 
 source.addInterface({
   name: "Params",
