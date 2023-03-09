@@ -21,6 +21,22 @@ export default class Bot {
             site, title, text, Number(revisionId)
         );
     }
+
+    static async category(source: Site, title: string): Promise<Category> {
+        const res = await source.client.invoke(
+            requests.query({
+                list: "categorymembers",
+                cmtitle: `Category:${title}`,
+                cmlimit: 500,
+                cmprop: "title",
+            })
+        );
+
+        const members = res.query.categorymembers;
+        const articles = []
+        for (const m of members) articles.push(m.title);
+        return new Category(articles);
+    }
 }
 
 export class Site {
@@ -98,5 +114,13 @@ export class Page {
                 token: this.site.csrftoken,
             })
         );
+    }
+}
+
+export class Category {
+    public readonly articles;
+
+    constructor(articles: string[]) {
+        this.articles = articles
     }
 }
