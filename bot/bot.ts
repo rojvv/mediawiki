@@ -1,5 +1,5 @@
-import * as requests from "./requests.ts";
-import {Client} from "./client.ts";
+import * as requests from "../api/requests.ts";
+import {Client} from "../api/client.ts";
 
 export default class Bot {
     static site(url: string): Site {
