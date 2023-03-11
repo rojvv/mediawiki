@@ -1,6 +1,26 @@
 import * as requests from "../api/requests.ts";
 import {Client} from "../api/client.ts";
 
+type FamilyCode = "ar" | "cs" | "da" | "de" | "el" | "en" | "es" | "et" | "fa" | "fi" | "fr" | "he" | "hu" | "is" | "it" | "ja" | "ko" | "lt" | "lv" | "nl" | "nn" | "no" | "pl" | "pt" | "pt-br" | "ru" | "sk" | "sv" | "tr" | "uk" | "zh" | "zh-tw";
+
+export class SiteUrl {
+    static fandom(communityName: string, code: FamilyCode = 'en') {
+        if (communityName.match(/^[a-zA-Z0-9\-]{0,50}$/)) {
+            return `https://${communityName}.fandom.com/${code}/api.php`;
+        } else {
+            throw new Error("Invalid Fandom site name");
+        }
+    }
+
+    static mediawiki() {
+        return "https://www.mediawiki.org/w/api.php";
+    }
+
+    static wikipedia(code: FamilyCode = 'en') {
+        return `https://${code}.wikipedia.org/w/api.php`
+    }
+}
+
 export default class Bot {
     static site(url: string): Site {
         return new Site(url);
@@ -39,7 +59,7 @@ export default class Bot {
     }
 }
 
-export class Site {
+class Site {
     public readonly url: string = "";
     client: Client;
     csrftoken = "";
@@ -49,6 +69,12 @@ export class Site {
         this.client = new Client(this.url);
     }
 
+    /**
+     * Login via bot account & bot password.
+     * For more information, see https://www.mediawiki.org/wiki/Special:BotPasswords
+     * @param botAccount An account that has 'Bot password'
+     * @param botPassword Bot password
+     */
     async login(botAccount: string, botPassword: string) {
 
         // Login step reference https://www.mediawiki.org/wiki/API:Edit#Example
@@ -70,7 +96,7 @@ export class Site {
     }
 }
 
-export class Page {
+class Page {
 
     private site: Site;
     public readonly title: string;
@@ -117,7 +143,7 @@ export class Page {
     }
 }
 
-export class Category {
+class Category {
     public readonly articles;
 
     constructor(articles: string[]) {
