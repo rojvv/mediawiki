@@ -112,32 +112,33 @@ class Page {
 
     /**
      * Save the page
-     * @param summary Summary of this edit. This message will show on the `history` page.
-     * @param minor Mark this edit as a minor edit
-     * @param botFlag Mark this edit as a bot edit
+     * @param params
+     * @member {string} summary Summary of this edit. This message will show on the `history` page.
+     * @member {boolean} minor Mark this edit as a minor edit
+     * @member {boolean} bot Mark this edit as a bot edit
      */
-    public async save(summary?: string, minor?: boolean, botFlag?: boolean) {
+    public async save(params: {summary?: string, minor?: boolean, bot?: boolean}) {
         await this.site.client.invoke(
             requests.edit({
                 title: this.title,
                 text: this.text,
-                summary: summary,
-                minor: minor,
                 token: this.site.csrftoken,
+                ...params,
             })
         );
     }
 
     /**
      * Delete a page
-     * @param reason The summary of the deletion
+     * @param params
+     * @member {string} reason The summary of the deletion
      */
-    public async delete(reason?: string) {
+    public async delete(params: {reason?: string}) {
         await this.site.client.invoke(
             requests.delete_({
                 title: this.title,
-                reason: reason,
                 token: this.site.csrftoken,
+                ...params
             })
         );
     }
