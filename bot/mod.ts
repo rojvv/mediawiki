@@ -1,1 +1,1 @@
-export * from "./bot.ts"
+export * from "./bot.ts";
