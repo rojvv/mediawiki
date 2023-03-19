@@ -191,8 +191,8 @@ Deno.test("Test login", async (t) => {
 
   const botAccount = "BotAccount";
   const botPassword = "BotPassword";
-  const loginToken = "d22e4f268418b9bf885e971b4a137d3f1afda882+\\"; // Random generated
-  const csrftoken = "7f69c0df881410c47ce83a431b47dc7a3f73c807+\\";  // Random generated
+  const loginToken = [...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('') + "+\\"; // Random generated
+  const csrftoken = [...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('') + "+\\"; // Random generated
 
   const loginTokenResp = {  // Response of login token request
     "batchcomplete": "",
