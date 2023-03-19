@@ -24,10 +24,36 @@ export class SiteUrl {
 export default class Bot {
     static site(url: string): Site {
         return new Site(url);
+
+        // TODO Validate if the url is a wiki site
+    }
+}
+
+class Site {
+    public readonly url: string = "";
+    public readonly client: Client;
+    private _csrftoken = "+\\";
+
+    constructor(url: string) {
+        this.url = url;
+        this.client = new Client(this.url);
     }
 
-    static async page(site: Site, title: string): Promise<Page> {
-        const res = await site.client.invoke(
+    // Getter and settter for csrftoken
+    private set csrftoken(token: string) {
+        this._csrftoken = token;
+    }
+    public get csrftoken() {
+        return this._csrftoken;
+    }
+
+    /**
+     * Get a page from the wiki site.
+     * @param title Title of the article.
+     * @returns Page information.
+     */
+    async page(title: string): Promise<Page> {
+        const res = await this.client.invoke(
             requests.query({
                 titles: title,
                 prop: "revisions",
@@ -35,15 +61,25 @@ export default class Bot {
                 rvslots: "main"
             })
         );
-        const revisionId = Object.keys(res.query.pages)[0];
-        const text = res.query.pages[revisionId]["revisions"][0]["slots"]["main"]["*"];
-        return new Page(
-            site, title, text, Number(revisionId)
-        );
+        const pageId = Object.keys(res.query.pages)[0];
+
+        if (pageId === "-1") { // Page not exist
+            throw new Error(`No such page: ${title}`);
+        } else {
+            const text = res.query.pages[pageId].revisions[0].slots.main["*"];
+            return new Page(
+                this, title, text, Number(pageId)
+            );
+        }
     }
 
-    static async category(source: Site, title: string): Promise<Category> {
-        const res = await source.client.invoke(
+    /**
+     * Get a category from the wiki site.
+     * @param title Name of the category
+     * @returns Category information
+     */
+    async category(title: string): Promise<Category> {
+        const {query: {categorymembers: members}} = await this.client.invoke(
             requests.query({
                 list: "categorymembers",
                 cmtitle: `Category:${title}`,
@@ -51,22 +87,15 @@ export default class Bot {
                 cmprop: "title",
             })
         );
-
-        const members = res.query.categorymembers;
-        const articles = []
-        for (const m of members) articles.push(m.title);
+ 
+        // TODO Handles different "ns" (namespace)
+        const articles = [];
+        for (const m of members) {
+            if (m.ns === 0) {
+                articles.push(m.title);
+            }
+        }
         return new Category(articles);
-    }
-}
-
-class Site {
-    public readonly url: string = "";
-    client: Client;
-    csrftoken = "";
-
-    constructor(url: string, code?: string) {
-        this.url = url;
-        this.client = new Client(this.url);
     }
 
     /**
@@ -92,7 +121,12 @@ class Site {
         const {query: {tokens: {csrftoken: csrftoken}}} = await this.client.invoke(
             requests.query({meta: "tokens"}),
         );
-        this.csrftoken = csrftoken;
+
+        if (csrftoken === "+\\") { // Login failed
+            throw new Error("Login Failed");
+        } else {
+            this.csrftoken = csrftoken;  // Login Success
+        }
     }
 }
 
@@ -101,13 +135,13 @@ class Page {
     private site: Site;
     public readonly title: string;
     public text: string;
-    public readonly revisionId: number;
+    public readonly pageId: number;
 
-    constructor(site: Site, title: string, text: string, revisionId: number) {
+    constructor(site: Site, title: string, text: string, pageId: number) {
         this.site = site;
         this.title = title;
         this.text = text;
-        this.revisionId = revisionId;
+        this.pageId = pageId;
     }
 
     /**
@@ -117,8 +151,8 @@ class Page {
      * @member {boolean} minor Mark this edit as a minor edit
      * @member {boolean} bot Mark this edit as a bot edit
      */
-    public async save(params: {summary?: string, minor?: boolean, bot?: boolean}) {
-        await this.site.client.invoke(
+    public async save(params?: {summary?: string, minor?: boolean, bot?: boolean}) {
+        const resp = await this.site.client.invoke(
             requests.edit({
                 title: this.title,
                 text: this.text,
@@ -126,6 +160,11 @@ class Page {
                 ...params,
             })
         );
+
+        if (resp?.edit?.result !== "Success") { // Edit failed
+            const message = resp?.error?.info ?? "";
+            throw new Error(`Save Page Failed. ${message}`);
+        }
     }
 
     /**
@@ -133,15 +172,21 @@ class Page {
      * @param params
      * @member {string} reason The summary of the deletion
      */
-    public async delete(params: {reason?: string}) {
-        await this.site.client.invoke(
+    public async delete(params?: {reason?: string}) {
+        const resp = await this.site.client.invoke(
             requests.delete_({
                 title: this.title,
                 token: this.site.csrftoken,
                 ...params
             })
         );
+
+        if (resp?.error) { // Delete failed
+            const message = resp?.error?.info ?? "";
+            throw new Error(`Delete page failed. ${message}`);
+        }
     }
+    
 }
 
 class Category {
@@ -150,4 +195,7 @@ class Category {
     constructor(articles: string[]) {
         this.articles = articles
     }
+
+    // TODO Retrieve the content of the category
+    // TODO List the subcategory
 }
