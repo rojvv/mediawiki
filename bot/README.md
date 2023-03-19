@@ -1,31 +1,40 @@
 # MediaWiki Bot
 
-MediaWiki Bot helps you manipulate wiki more easily. This bot allows you to get / edit / delete a page, and get a list of page names in a category.
+MediaWiki Bot helps you manipulate wiki more easily. This bot allows you to get
+/ edit / delete a page, and get a list of page names in a category.
 
 ## Example
+
 ### Get a page
+
 This bot is supported for getting the content of a page from a wiki site.
 
 For example, get a page named "Cat" from English Wikipedia:
 
 ```typescript
-import {Bot, SiteUrl} from 'https://deno.land/x/mediawiki/bot/mod.ts';
+import { Bot, SiteUrl } from "https://deno.land/x/mediawiki/bot/mod.ts";
 
-const site = Bot.site(SiteUrl.wikipedia("en"));  // wikipedia site
-const page = await site.page("Cat");  // Get the "Cat" page
-console.log(page.text);  // Print the content of the page
+const site = Bot.site(SiteUrl.wikipedia("en")); // wikipedia site
+const page = await site.page("Cat"); // Get the "Cat" page
+console.log(page.text); // Print the content of the page
 ```
 
 ### Login
-If you'd like to edit or delete a page, you'd better  log in, or your IP will be disclosed.
 
-Currently, only [BotPassword](https://www.mediawiki.org/wiki/Manual:Bot_passwords) is supported to log in.
+If you'd like to edit or delete a page, you'd better log in, or your IP will be
+disclosed.
+
+Currently, only
+[BotPassword](https://www.mediawiki.org/wiki/Manual:Bot_passwords) is supported
+to log in.
+
 ```typescript
 const site = Bot.site(SiteUrl.wikipedia("en"));
 await site.login("bot_account", "bot_password"); // Login to the wiki site
 ```
 
 ### Edit a page
+
 You can edit a page via this bot.
 
 ```typescript
@@ -33,12 +42,13 @@ const site = Bot.site(SiteUrl.wikipedia("en"));
 await site.login("bot_account", "bot_password");
 
 const page = await site.page("Some page");
-page.text = "This is new content";  // Change the content
+page.text = "This is new content"; // Change the content
 
-await page.save({summary: "New Edit"});  // Publish your changes
+await page.save({ summary: "New Edit" }); // Publish your changes
 ```
 
 ### Delete a page
+
 You can also delete a page.
 
 ```typescript
@@ -47,70 +57,79 @@ await page.delete(); // Delete a page
 ```
 
 ### Get category
-You can get a list of page names in a category. 
+
+You can get a list of page names in a category.
 
 ```typescript
 const category = await site.category("Cats");
-console.log(category.articles);  // Print all page names in the category.
+console.log(category.articles); // Print all page names in the category.
 ```
 
 ## APIs
 
 ### Bot
-* `static site(url: string): Site`
 
-    Create a site instance with Wiki's API URL.
+- `static site(url: string): Site`
+
+  Create a site instance with Wiki's API URL.
 
 ### Site
-* `login(botAccount: string, botPassword: string): Promise<void>`
 
-    Login to the wiki site via username and [bot password](https://www.mediawiki.org/wiki/Manual:Bot_passwords).
+- `login(botAccount: string, botPassword: string): Promise<void>`
 
-* `page(title: string): Promise<Page>`
+  Login to the wiki site via username and
+  [bot password](https://www.mediawiki.org/wiki/Manual:Bot_passwords).
 
-    Get a page instance.
+- `page(title: string): Promise<Page>`
 
-* `category(title: string): Promise<Category>`
+  Get a page instance.
 
-    Get a category instance.
+- `category(title: string): Promise<Category>`
+
+  Get a category instance.
 
 ### Page
-* `text: string`
 
-    The content of the page. If you want to edit the page, you can change the value of this property.
+- `text: string`
 
-* `save(params?: {summary?: string, minor?: boolean, bot?: boolean}): Promise<void>`
+  The content of the page. If you want to edit the page, you can change the
+  value of this property.
 
-    Publish your changes on `text`.
+- `save(params?: {summary?: string, minor?: boolean, bot?: boolean}): Promise<void>`
 
-    `summary`: The summary of the edit.
+  Publish your changes on `text`.
 
-    `minor`: Mark this edit as a minor edit.
+  `summary`: The summary of the edit.
 
-    `bot`: Mark this edit as a bot edit.
+  `minor`: Mark this edit as a minor edit.
 
-* `delete(params?: {reason?: string}): Promise<void>`
+  `bot`: Mark this edit as a bot edit.
 
-    Delete the page.
+- `delete(params?: {reason?: string}): Promise<void>`
 
-    `reason`: The reason for deleting the page.
+  Delete the page.
+
+  `reason`: The reason for deleting the page.
 
 ### Category
-* `articles: string[]`
-    
-    Get a list of page names in the category.
+
+- `articles: string[]`
+
+  Get a list of page names in the category.
 
 ### SiteUrl
-You can specify the wiki site by SiteUrl. 
 
-* `static wikipedia(code='en'): string`
+You can specify the wiki site by SiteUrl.
 
-    Get API URL of Wikipedia with language code. Default language is English.
+- `static wikipedia(code='en'): string`
 
-* `static mediawiki(): string`
-    
-    Get API URL of MediaWiki.
+  Get API URL of Wikipedia with language code. Default language is English.
 
-* `static fandom(communityName: string, code = 'en'): string`
+- `static mediawiki(): string`
 
-    Get API URL of Fandom with community name and language code. Default language is English.
+  Get API URL of MediaWiki.
+
+- `static fandom(communityName: string, code = 'en'): string`
+
+  Get API URL of Fandom with community name and language code. Default language
+  is English.
