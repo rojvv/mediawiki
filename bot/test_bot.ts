@@ -1,5 +1,5 @@
 // Unit test for `Bot`
-import Bot, { SiteUrl } from "./bot.ts";
+import { Bot, SiteUrl } from "./bot.ts";
 import {
   assertSpyCallArg,
   resolvesNext,

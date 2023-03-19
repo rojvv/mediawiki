@@ -21,7 +21,7 @@ export class SiteUrl {
     }
 }
 
-export default class Bot {
+export class Bot {
     static site(url: string): Site {
         return new Site(url);
 
