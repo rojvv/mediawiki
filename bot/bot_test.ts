@@ -3,16 +3,14 @@ import { Bot, SiteUrl } from "./bot.ts";
 import {
   assertSpyCallArg,
   resolvesNext,
-  stub
-} from "https://deno.land/std@0.165.0/testing/mock.ts";
+  stub,
+} from "https://deno.land/std@0.180.0/testing/mock.ts";
 import {
   assertEquals,
-  assertRejects
-} from "https://deno.land/std@0.178.0/testing/asserts.ts";
-
+  assertRejects,
+} from "https://deno.land/std@0.180.0/testing/asserts.ts";
 
 Deno.test("Test pages", async (t) => {
-
   // The response of successful page request
   const pageResp = {
     "batchcomplete": "",
@@ -28,18 +26,17 @@ Deno.test("Test pages", async (t) => {
                 "main": {
                   "contentmodel": "wikitext",
                   "contentformat": "text/x-wiki",
-                  "*": "This is an example page!!"
-                }
-              }
-            }
-          ]
-        }
-      }
-    }
+                  "*": "This is an example page!!",
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
   };
 
   await t.step("Get page successfully", async () => {
-
     const site = Bot.site(SiteUrl.fandom("ncs", "zh"));
 
     stub(site.client, "invoke", resolvesNext([pageResp])); // Mock the `invoke` function
@@ -59,17 +56,17 @@ Deno.test("Test pages", async (t) => {
         "normalized": [
           {
             "from": "no no no",
-            "to": "No no no"
-          }
+            "to": "No no no",
+          },
         ],
         "pages": {
           "-1": {
             "ns": 0,
             "title": "No no no",
-            "missing": ""
-          }
-        }
-      }
+            "missing": "",
+          },
+        },
+      },
     };
     stub(site.client, "invoke", resolvesNext([pageFailedResp]));
 
@@ -77,8 +74,7 @@ Deno.test("Test pages", async (t) => {
   });
 
   await t.step("Save page successfully", async () => {
-
-    const site = Bot.site(SiteUrl.wikipedia('en'));
+    const site = Bot.site(SiteUrl.wikipedia("test"));
 
     const editResp = { // Response of successful edit request
       edit: {
@@ -88,8 +84,8 @@ Deno.test("Test pages", async (t) => {
         contentmodel: "wikitext",
         oldrevid: 5520,
         newrevid: 5521,
-        newtimestamp: "2027-07-11T16:05:33Z"
-      }
+        newtimestamp: "2027-07-11T16:05:33Z",
+      },
     };
 
     stub(site.client, "invoke", resolvesNext([pageResp, editResp]));
@@ -101,14 +97,16 @@ Deno.test("Test pages", async (t) => {
   });
 
   await t.step("Save page failed", async () => {
-    const site = Bot.site(SiteUrl.wikipedia('en'));
+    const site = Bot.site(SiteUrl.wikipedia("test"));
 
     const editResp = { // Response of failed edit request (page protected)
       "error": {
         "code": "protectedpage",
-        "info": "This page has been protected to prevent editing or other actions.",
-        "*": "See https://en.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes."
-      }
+        "info":
+          "This page has been protected to prevent editing or other actions.",
+        "*":
+          "See https://en.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes.",
+      },
     };
 
     stub(site.client, "invoke", resolvesNext([pageResp, editResp]));
@@ -120,15 +118,15 @@ Deno.test("Test pages", async (t) => {
   });
 
   await t.step("Delete page successfully", async () => {
-    const site = Bot.site(SiteUrl.wikipedia('en'));
+    const site = Bot.site(SiteUrl.wikipedia("test"));
 
     const deleteResp = { // Response of successful delete request
       "delete": {
         "title": "Example page",
         "reason": "Bye~",
-        "logid": 2042
-      }
-    }
+        "logid": 2042,
+      },
+    };
 
     stub(site.client, "invoke", resolvesNext([pageResp, deleteResp]));
 
@@ -137,15 +135,17 @@ Deno.test("Test pages", async (t) => {
   });
 
   await t.step("Delete page failed", async () => {
-    const site = Bot.site(SiteUrl.wikipedia('en'));
+    const site = Bot.site(SiteUrl.wikipedia("test"));
 
-    const deleteResp = {  // Response of failed delete request (permission denied)
+    const deleteResp = { // Response of failed delete request (permission denied)
       "error": {
         "code": "permissiondenied",
-        "info": "The action you have requested is limited to users in the group: [[Wikipedia:Admin]].",
-        "*": "See https://en.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes."
+        "info":
+          "The action you have requested is limited to users in the group: [[Wikipedia:Admin]].",
+        "*":
+          "See https://en.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes.",
       },
-    }
+    };
     stub(site.client, "invoke", resolvesNext([pageResp, deleteResp]));
 
     const page = await site.page("Cats");
@@ -155,31 +155,31 @@ Deno.test("Test pages", async (t) => {
 
 Deno.test("Test category", async (t) => {
   await t.step("Get category successfully", async () => {
-    const site = Bot.site(SiteUrl.wikipedia("en"));
+    const site = Bot.site(SiteUrl.wikipedia("test"));
 
-    const categoryResp = {  // Response of category request
+    const categoryResp = { // Response of category request
       "batchcomplete": "",
       "query": {
         "categorymembers": [
           {
             "ns": 0,
-            "title": "Cat"
+            "title": "Cat",
           },
           {
             "ns": 0,
-            "title": "Kitten"
+            "title": "Kitten",
           },
           {
             "ns": 5,
-            "title": "Wikipedia talk:WikiProject Cats/Archive 3"
+            "title": "Wikipedia talk:WikiProject Cats/Archive 3",
           },
           {
             "ns": 14,
-            "title": "Category:Cats by country"
+            "title": "Category:Cats by country",
           },
-        ]
-      }
-    }
+        ],
+      },
+    };
 
     stub(site.client, "invoke", resolvesNext([categoryResp]));
     const category = await site.category("Cats");
@@ -188,38 +188,52 @@ Deno.test("Test category", async (t) => {
 });
 
 Deno.test("Test login", async (t) => {
-
   const botAccount = "BotAccount";
   const botPassword = "BotPassword";
-  const loginToken = [...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('') + "+\\"; // Random generated
-  const csrftoken = [...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('') + "+\\"; // Random generated
+  const loginToken =
+    [...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join(
+      "",
+    ) + "+\\"; // Random generated
+  const csrftoken =
+    [...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join(
+      "",
+    ) + "+\\"; // Random generated
 
-  const loginTokenResp = {  // Response of login token request
+  const loginTokenResp = { // Response of login token request
     "batchcomplete": "",
     "query": {
       "tokens": {
         "logintoken": loginToken,
-      }
-    }
+      },
+    },
   };
 
   await t.step("Login successful", async () => {
-    const site = Bot.site(SiteUrl.wikipedia('en'));
+    const site = Bot.site(SiteUrl.wikipedia("test"));
 
-    const csrfTokenResp = {  // Response of successful csrf token request
+    const csrfTokenResp = { // Response of successful csrf token request
       "batchcomplete": "",
       "query": {
         "tokens": {
           "csrftoken": csrftoken,
-        }
-      }
+        },
+      },
     };
 
-    const stubClient = stub(site.client, "invoke", resolvesNext([loginTokenResp, {}, csrfTokenResp]));
+    const stubClient = stub(
+      site.client,
+      "invoke",
+      resolvesNext([loginTokenResp, {}, csrfTokenResp]),
+    );
     await site.login(botAccount, botPassword);
 
     // Assert `login` function is called with correct parameters
-    assertSpyCallArg(stubClient, 1, 0, [true, { action: "login", lgname: botAccount, lgpassword: botPassword, lgtoken: loginToken }]);
+    assertSpyCallArg(stubClient, 1, 0, [true, {
+      action: "login",
+      lgname: botAccount,
+      lgpassword: botPassword,
+      lgtoken: loginToken,
+    }]);
     assertEquals(site.csrftoken, csrftoken);
   });
 
@@ -227,15 +241,19 @@ Deno.test("Test login", async (t) => {
   await t.step("Login failed", async () => {
     const site = Bot.site(SiteUrl.mediawiki());
 
-    const csrfTokenResp = {  // Response of failed csrf token request
+    const csrfTokenResp = { // Response of failed csrf token request
       "batchcomplete": "",
       "query": {
         "tokens": {
-          "csrftoken": "+\\"
-        }
-      }
+          "csrftoken": "+\\",
+        },
+      },
     };
-    stub(site.client, "invoke", resolvesNext([loginTokenResp, {}, csrfTokenResp]));
+    stub(
+      site.client,
+      "invoke",
+      resolvesNext([loginTokenResp, {}, csrfTokenResp]),
+    );
     assertRejects(async () => await site.login(botAccount, botPassword), Error);
   });
 });
