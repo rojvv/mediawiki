@@ -121,7 +121,7 @@ export class Bot {
       );
 
     if (csrftoken === "+\\") { // Login failed
-      throw new Error("Login Failed");
+      throw new Error("Login failed");
     } else {
       this.csrftoken = csrftoken; // Login Success
     }
@@ -158,7 +158,7 @@ class Page {
 
     if (resp?.edit?.result !== "Success") { // Edit failed
       const message = resp?.error?.info ?? "";
-      throw new Error(`Save Page Failed. ${message}`);
+      throw new Error(`Failed to save page: ${message}`);
     }
   }
 
@@ -178,7 +178,7 @@ class Page {
 
     if (resp?.error) { // Delete failed
       const message = resp?.error?.info ?? "";
-      throw new Error(`Delete page failed. ${message}`);
+      throw new Error(`Failed to delete page: ${message}`);
     }
   }
 }
