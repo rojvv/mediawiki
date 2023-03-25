@@ -1,14 +1,14 @@
 // Unit test for `Bot`
-import { Bot, SiteUrl } from "./bot.ts";
 import {
   assertSpyCallArg,
   resolvesNext,
   stub,
-} from "https://deno.land/std@0.180.0/testing/mock.ts";
+} from "https://deno.land/std@0.181.0/testing/mock.ts";
 import {
   assertEquals,
   assertRejects,
-} from "https://deno.land/std@0.180.0/testing/asserts.ts";
+} from "https://deno.land/std@0.181.0/testing/asserts.ts";
+import { Bot, SiteUrl } from "./bot.ts";
 
 Deno.test("Test pages", async (t) => {
   // The response of successful page request
