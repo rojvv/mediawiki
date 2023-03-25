@@ -21,10 +21,10 @@ export class SiteUrl {
 }
 
 export class Bot {
-  public readonly client: Client;
+  readonly client: Client;
   private _csrftoken = "+\\";
 
-  constructor(public readonly url: string) {
+  constructor(readonly url: string) {
     // TODO: Validate if the url is a wiki site
     this.client = new Client(this.url);
   }
@@ -33,12 +33,13 @@ export class Bot {
   private set csrftoken(token: string) {
     this._csrftoken = token;
   }
-  public get csrftoken() {
+  get csrftoken() {
     return this._csrftoken;
   }
 
   /**
    * Get a page from the wiki site.
+   *
    * @param title Title of the article.
    * @returns Page information.
    */
@@ -68,6 +69,7 @@ export class Bot {
 
   /**
    * Get a category from the wiki site.
+   *
    * @param title Name of the category
    * @returns Category information
    */
@@ -92,8 +94,8 @@ export class Bot {
   }
 
   /**
-   * Login via bot account & bot password.
-   * For more information, see https://www.mediawiki.org/wiki/Special:BotPasswords
+   * Login via bot account & bot password. For more information, see https://www.mediawiki.org/wiki/Special:BotPasswords.
+   *
    * @param botAccount An account that has 'Bot password'
    * @param botPassword Bot password
    */
@@ -131,20 +133,21 @@ export class Bot {
 class Page {
   constructor(
     private bot: Bot,
-    public readonly title: string,
+    readonly title: string,
     public text: string,
-    public readonly pageId: number,
+    readonly pageId: number,
   ) {
   }
 
   /**
-   * Save the page
+   * Save the page.
+   *
    * @param params
-   * @member {string} summary Summary of this edit. This message will show on the `history` page.
-   * @member {boolean} minor Mark this edit as a minor edit
-   * @member {boolean} bot Mark this edit as a bot edit
+   * @member summary Summary of this edit. This message will show on the `history` page.
+   * @member minor Mark this edit as a minor edit
+   * @member bot Mark this edit as a bot edit
    */
-  public async save(
+  async save(
     params?: { summary?: string; minor?: boolean; bot?: boolean },
   ) {
     const resp = await this.bot.client.invoke(
@@ -163,11 +166,12 @@ class Page {
   }
 
   /**
-   * Delete a page
+   * Delete the page.
+   *
    * @param params
-   * @member {string} reason The summary of the deletion
+   * @member reason The summary of the deletion
    */
-  public async delete(params?: { reason?: string }) {
+  async delete(params?: { reason?: string }) {
     const resp = await this.bot.client.invoke(
       requests.delete_({
         title: this.title,
@@ -184,7 +188,7 @@ class Page {
 }
 
 class Category {
-  constructor(public readonly articles: string[]) {
+  constructor(readonly articles: string[]) {
   }
 
   // TODO Retrieve the content of the category
