@@ -11,10 +11,10 @@ This bot is supported for getting the content of a page from a wiki site.
 For example, get a page named "Cat" from English Wikipedia:
 
 ```typescript
-import { Site, SiteUrl } from "https://deno.land/x/mediawiki/bot/mod.ts";
+import { Bot, SiteUrl } from "https://deno.land/x/mediawiki/bot/mod.ts";
 
-const site = new Site(SiteUrl.wikipedia("en")); // wikipedia site
-const page = await site.page("Cat"); // Get the "Cat" page
+const bot = new Bot(SiteUrl.wikipedia("en")); // wikipedia site
+const page = await bot.page("Cat"); // Get the "Cat" page
 console.log(page.text); // Print the content of the page
 ```
 
@@ -28,8 +28,8 @@ Currently, only
 to log in.
 
 ```typescript
-const site = new Site(SiteUrl.wikipedia("en"));
-await site.login("bot_account", "bot_password"); // Login to the wiki site
+const bot = new Bot(SiteUrl.wikipedia("en"));
+await bot.login("bot_account", "bot_password"); // Login to the wiki site
 ```
 
 ### Edit a page
@@ -37,10 +37,10 @@ await site.login("bot_account", "bot_password"); // Login to the wiki site
 You can edit a page via this bot.
 
 ```typescript
-const site = new Site(SiteUrl.wikipedia("en"));
-await site.login("bot_account", "bot_password");
+const bot = new Bot(SiteUrl.wikipedia("en"));
+await bot.login("bot_account", "bot_password");
 
-const page = await site.page("Some page");
+const page = await bot.page("Some page");
 page.text = "This is new content"; // Change the content
 
 await page.save({ summary: "New Edit" }); // Publish your changes
@@ -51,7 +51,7 @@ await page.save({ summary: "New Edit" }); // Publish your changes
 You can also delete a page.
 
 ```typescript
-const page = await site.page("Some page");
+const page = await bot.page("Some page");
 await page.delete(); // Delete a page
 ```
 
@@ -60,13 +60,13 @@ await page.delete(); // Delete a page
 You can get a list of page names in a category.
 
 ```typescript
-const category = await site.category("Cats");
+const category = await bot.category("Cats");
 console.log(category.articles); // Print all page names in the category.
 ```
 
 ## APIs
 
-### Site
+### Bot
 
 - `login(botAccount: string, botPassword: string): Promise<void>`
 

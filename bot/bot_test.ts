@@ -1,5 +1,5 @@
 // Unit test for `Bot`
-import { Site, SiteUrl } from "./bot.ts";
+import { Bot, SiteUrl } from "./bot.ts";
 import {
   assertSpyCallArg,
   resolvesNext,
@@ -37,18 +37,18 @@ Deno.test("Test pages", async (t) => {
   };
 
   await t.step("Get page successfully", async () => {
-    const site = new Site(SiteUrl.fandom("ncs", "zh"));
+    const bot = new Bot(SiteUrl.fandom("ncs", "zh"));
 
-    stub(site.client, "invoke", resolvesNext([pageResp])); // Mock the `invoke` function
+    stub(bot.client, "invoke", resolvesNext([pageResp])); // Mock the `invoke` function
 
-    const page = await site.page("Example page");
+    const page = await bot.page("Example page");
     assertEquals(page.title, "Example page");
     assertEquals(page.pageId, 634);
     assertEquals(page.text, "This is an example page!!");
   });
 
   await t.step("Get page failed", () => {
-    const site = new Site(SiteUrl.fandom("ncs", "zh"));
+    const bot = new Bot(SiteUrl.fandom("ncs", "zh"));
 
     const pageFailedResp = { // The response of failed page request (page not exist)
       "batchcomplete": "",
@@ -68,13 +68,13 @@ Deno.test("Test pages", async (t) => {
         },
       },
     };
-    stub(site.client, "invoke", resolvesNext([pageFailedResp]));
+    stub(bot.client, "invoke", resolvesNext([pageFailedResp]));
 
-    assertRejects(async () => await site.page("No no no"), Error);
+    assertRejects(async () => await bot.page("No no no"), Error);
   });
 
   await t.step("Save page successfully", async () => {
-    const site = new Site(SiteUrl.wikipedia("test"));
+    const bot = new Bot(SiteUrl.wikipedia("test"));
 
     const editResp = { // Response of successful edit request
       edit: {
@@ -88,16 +88,16 @@ Deno.test("Test pages", async (t) => {
       },
     };
 
-    stub(site.client, "invoke", resolvesNext([pageResp, editResp]));
+    stub(bot.client, "invoke", resolvesNext([pageResp, editResp]));
 
-    const page = await site.page("Example page");
+    const page = await bot.page("Example page");
     page.text = "This is new content";
 
     await page.save({ summary: "test", minor: true }); // No error throws
   });
 
   await t.step("Save page failed", async () => {
-    const site = new Site(SiteUrl.wikipedia("test"));
+    const bot = new Bot(SiteUrl.wikipedia("test"));
 
     const editResp = { // Response of failed edit request (page protected)
       "error": {
@@ -109,16 +109,16 @@ Deno.test("Test pages", async (t) => {
       },
     };
 
-    stub(site.client, "invoke", resolvesNext([pageResp, editResp]));
+    stub(bot.client, "invoke", resolvesNext([pageResp, editResp]));
 
-    const page = await site.page("Example page");
+    const page = await bot.page("Example page");
     page.text = "This is new content";
 
     assertRejects(async () => await page.save({ summary: "new edit!" }), Error);
   });
 
   await t.step("Delete page successfully", async () => {
-    const site = new Site(SiteUrl.wikipedia("test"));
+    const bot = new Bot(SiteUrl.wikipedia("test"));
 
     const deleteResp = { // Response of successful delete request
       "delete": {
@@ -128,14 +128,14 @@ Deno.test("Test pages", async (t) => {
       },
     };
 
-    stub(site.client, "invoke", resolvesNext([pageResp, deleteResp]));
+    stub(bot.client, "invoke", resolvesNext([pageResp, deleteResp]));
 
-    const page = await site.page("Example page");
+    const page = await bot.page("Example page");
     await page.delete({ reason: "Bye~" }); // No error throws
   });
 
   await t.step("Delete page failed", async () => {
-    const site = new Site(SiteUrl.wikipedia("test"));
+    const bot = new Bot(SiteUrl.wikipedia("test"));
 
     const deleteResp = { // Response of failed delete request (permission denied)
       "error": {
@@ -146,16 +146,16 @@ Deno.test("Test pages", async (t) => {
           "See https://en.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes.",
       },
     };
-    stub(site.client, "invoke", resolvesNext([pageResp, deleteResp]));
+    stub(bot.client, "invoke", resolvesNext([pageResp, deleteResp]));
 
-    const page = await site.page("Cats");
+    const page = await bot.page("Cats");
     assertRejects(async () => await page.delete(), Error);
   });
 });
 
 Deno.test("Test category", async (t) => {
   await t.step("Get category successfully", async () => {
-    const site = new Site(SiteUrl.wikipedia("test"));
+    const bot = new Bot(SiteUrl.wikipedia("test"));
 
     const categoryResp = { // Response of category request
       "batchcomplete": "",
@@ -181,8 +181,8 @@ Deno.test("Test category", async (t) => {
       },
     };
 
-    stub(site.client, "invoke", resolvesNext([categoryResp]));
-    const category = await site.category("Cats");
+    stub(bot.client, "invoke", resolvesNext([categoryResp]));
+    const category = await bot.category("Cats");
     assertEquals(category.articles, ["Cat", "Kitten"]);
   });
 });
@@ -209,7 +209,7 @@ Deno.test("Test login", async (t) => {
   };
 
   await t.step("Login successful", async () => {
-    const site = new Site(SiteUrl.wikipedia("test"));
+    const bot = new Bot(SiteUrl.wikipedia("test"));
 
     const csrfTokenResp = { // Response of successful csrf token request
       "batchcomplete": "",
@@ -221,11 +221,11 @@ Deno.test("Test login", async (t) => {
     };
 
     const stubClient = stub(
-      site.client,
+      bot.client,
       "invoke",
       resolvesNext([loginTokenResp, {}, csrfTokenResp]),
     );
-    await site.login(botAccount, botPassword);
+    await bot.login(botAccount, botPassword);
 
     // Assert `login` function is called with correct parameters
     assertSpyCallArg(stubClient, 1, 0, [true, {
@@ -234,12 +234,12 @@ Deno.test("Test login", async (t) => {
       lgpassword: botPassword,
       lgtoken: loginToken,
     }]);
-    assertEquals(site.csrftoken, csrftoken);
+    assertEquals(bot.csrftoken, csrftoken);
   });
 
   // deno-lint-ignore require-await
   await t.step("Login failed", async () => {
-    const site = new Site(SiteUrl.mediawiki());
+    const bot = new Bot(SiteUrl.mediawiki());
 
     const csrfTokenResp = { // Response of failed csrf token request
       "batchcomplete": "",
@@ -250,10 +250,10 @@ Deno.test("Test login", async (t) => {
       },
     };
     stub(
-      site.client,
+      bot.client,
       "invoke",
       resolvesNext([loginTokenResp, {}, csrfTokenResp]),
     );
-    assertRejects(async () => await site.login(botAccount, botPassword), Error);
+    assertRejects(async () => await bot.login(botAccount, botPassword), Error);
   });
 });

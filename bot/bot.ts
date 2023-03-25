@@ -20,7 +20,7 @@ export class SiteUrl {
   }
 }
 
-export class Site {
+export class Bot {
   public readonly url: string = "";
   public readonly client: Client;
   private _csrftoken = "+\\";
@@ -131,13 +131,13 @@ export class Site {
 }
 
 class Page {
-  private site: Site;
+  private bot: Bot;
   public readonly title: string;
   public text: string;
   public readonly pageId: number;
 
-  constructor(site: Site, title: string, text: string, pageId: number) {
-    this.site = site;
+  constructor(bot: Bot, title: string, text: string, pageId: number) {
+    this.bot = bot;
     this.title = title;
     this.text = text;
     this.pageId = pageId;
@@ -153,11 +153,11 @@ class Page {
   public async save(
     params?: { summary?: string; minor?: boolean; bot?: boolean },
   ) {
-    const resp = await this.site.client.invoke(
+    const resp = await this.bot.client.invoke(
       requests.edit({
         title: this.title,
         text: this.text,
-        token: this.site.csrftoken,
+        token: this.bot.csrftoken,
         ...params,
       }),
     );
@@ -174,10 +174,10 @@ class Page {
    * @member {string} reason The summary of the deletion
    */
   public async delete(params?: { reason?: string }) {
-    const resp = await this.site.client.invoke(
+    const resp = await this.bot.client.invoke(
       requests.delete_({
         title: this.title,
-        token: this.site.csrftoken,
+        token: this.bot.csrftoken,
         ...params,
       }),
     );
