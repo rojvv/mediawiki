@@ -21,13 +21,11 @@ export class SiteUrl {
 }
 
 export class Bot {
-  public readonly url: string = "";
   public readonly client: Client;
   private _csrftoken = "+\\";
 
-  constructor(url: string) {
+  constructor(public readonly url: string) {
     // TODO: Validate if the url is a wiki site
-    this.url = url;
     this.client = new Client(this.url);
   }
 
@@ -131,16 +129,12 @@ export class Bot {
 }
 
 class Page {
-  private bot: Bot;
-  public readonly title: string;
-  public text: string;
-  public readonly pageId: number;
-
-  constructor(bot: Bot, title: string, text: string, pageId: number) {
-    this.bot = bot;
-    this.title = title;
-    this.text = text;
-    this.pageId = pageId;
+  constructor(
+    private bot: Bot,
+    public readonly title: string,
+    public text: string,
+    public readonly pageId: number,
+  ) {
   }
 
   /**
@@ -190,10 +184,7 @@ class Page {
 }
 
 class Category {
-  public readonly articles;
-
-  constructor(articles: string[]) {
-    this.articles = articles;
+  constructor(public readonly articles: string[]) {
   }
 
   // TODO Retrieve the content of the category
