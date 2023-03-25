@@ -1,6 +1,6 @@
 # API
 
-> A MediaWiki API wrapper with TypeScript type declarations.
+> A MediaWiki API wrapper with TypeScript support
 
 ## Introduction
 
