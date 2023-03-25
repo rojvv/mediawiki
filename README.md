@@ -3,6 +3,8 @@
 > Modules for interacting with MediaWiki using Deno.
 
 - [API](./api) - The Deno MediaWiki API wrapper
+- [Bot](./bot) - A wrapper around the API wrapper that provides a high-level and
+  easy-to-use interface
 
 ## Feedback
 
