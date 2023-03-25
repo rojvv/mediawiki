@@ -20,20 +20,13 @@ export class SiteUrl {
   }
 }
 
-export class Bot {
-  static site(url: string): Site {
-    return new Site(url);
-
-    // TODO: Validate if the url is a wiki site
-  }
-}
-
-class Site {
+export class Site {
   public readonly url: string = "";
   public readonly client: Client;
   private _csrftoken = "+\\";
 
   constructor(url: string) {
+    // TODO: Validate if the url is a wiki site
     this.url = url;
     this.client = new Client(this.url);
   }

@@ -1,5 +1,5 @@
 // Unit test for `Bot`
-import { Bot, SiteUrl } from "./bot.ts";
+import { Site, SiteUrl } from "./bot.ts";
 import {
   assertSpyCallArg,
   resolvesNext,
@@ -37,7 +37,7 @@ Deno.test("Test pages", async (t) => {
   };
 
   await t.step("Get page successfully", async () => {
-    const site = Bot.site(SiteUrl.fandom("ncs", "zh"));
+    const site = new Site(SiteUrl.fandom("ncs", "zh"));
 
     stub(site.client, "invoke", resolvesNext([pageResp])); // Mock the `invoke` function
 
@@ -48,7 +48,7 @@ Deno.test("Test pages", async (t) => {
   });
 
   await t.step("Get page failed", () => {
-    const site = Bot.site(SiteUrl.fandom("ncs", "zh"));
+    const site = new Site(SiteUrl.fandom("ncs", "zh"));
 
     const pageFailedResp = { // The response of failed page request (page not exist)
       "batchcomplete": "",
@@ -74,7 +74,7 @@ Deno.test("Test pages", async (t) => {
   });
 
   await t.step("Save page successfully", async () => {
-    const site = Bot.site(SiteUrl.wikipedia("test"));
+    const site = new Site(SiteUrl.wikipedia("test"));
 
     const editResp = { // Response of successful edit request
       edit: {
@@ -97,7 +97,7 @@ Deno.test("Test pages", async (t) => {
   });
 
   await t.step("Save page failed", async () => {
-    const site = Bot.site(SiteUrl.wikipedia("test"));
+    const site = new Site(SiteUrl.wikipedia("test"));
 
     const editResp = { // Response of failed edit request (page protected)
       "error": {
@@ -118,7 +118,7 @@ Deno.test("Test pages", async (t) => {
   });
 
   await t.step("Delete page successfully", async () => {
-    const site = Bot.site(SiteUrl.wikipedia("test"));
+    const site = new Site(SiteUrl.wikipedia("test"));
 
     const deleteResp = { // Response of successful delete request
       "delete": {
@@ -135,7 +135,7 @@ Deno.test("Test pages", async (t) => {
   });
 
   await t.step("Delete page failed", async () => {
-    const site = Bot.site(SiteUrl.wikipedia("test"));
+    const site = new Site(SiteUrl.wikipedia("test"));
 
     const deleteResp = { // Response of failed delete request (permission denied)
       "error": {
@@ -155,7 +155,7 @@ Deno.test("Test pages", async (t) => {
 
 Deno.test("Test category", async (t) => {
   await t.step("Get category successfully", async () => {
-    const site = Bot.site(SiteUrl.wikipedia("test"));
+    const site = new Site(SiteUrl.wikipedia("test"));
 
     const categoryResp = { // Response of category request
       "batchcomplete": "",
@@ -209,7 +209,7 @@ Deno.test("Test login", async (t) => {
   };
 
   await t.step("Login successful", async () => {
-    const site = Bot.site(SiteUrl.wikipedia("test"));
+    const site = new Site(SiteUrl.wikipedia("test"));
 
     const csrfTokenResp = { // Response of successful csrf token request
       "batchcomplete": "",
@@ -239,7 +239,7 @@ Deno.test("Test login", async (t) => {
 
   // deno-lint-ignore require-await
   await t.step("Login failed", async () => {
-    const site = Bot.site(SiteUrl.mediawiki());
+    const site = new Site(SiteUrl.mediawiki());
 
     const csrfTokenResp = { // Response of failed csrf token request
       "batchcomplete": "",

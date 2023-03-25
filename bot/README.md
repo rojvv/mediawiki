@@ -11,9 +11,9 @@ This bot is supported for getting the content of a page from a wiki site.
 For example, get a page named "Cat" from English Wikipedia:
 
 ```typescript
-import { Bot, SiteUrl } from "https://deno.land/x/mediawiki/bot/mod.ts";
+import { Site, SiteUrl } from "https://deno.land/x/mediawiki/bot/mod.ts";
 
-const site = Bot.site(SiteUrl.wikipedia("en")); // wikipedia site
+const site = new Site(SiteUrl.wikipedia("en")); // wikipedia site
 const page = await site.page("Cat"); // Get the "Cat" page
 console.log(page.text); // Print the content of the page
 ```
@@ -28,7 +28,7 @@ Currently, only
 to log in.
 
 ```typescript
-const site = Bot.site(SiteUrl.wikipedia("en"));
+const site = new Site(SiteUrl.wikipedia("en"));
 await site.login("bot_account", "bot_password"); // Login to the wiki site
 ```
 
@@ -37,7 +37,7 @@ await site.login("bot_account", "bot_password"); // Login to the wiki site
 You can edit a page via this bot.
 
 ```typescript
-const site = Bot.site(SiteUrl.wikipedia("en"));
+const site = new Site(SiteUrl.wikipedia("en"));
 await site.login("bot_account", "bot_password");
 
 const page = await site.page("Some page");
@@ -65,12 +65,6 @@ console.log(category.articles); // Print all page names in the category.
 ```
 
 ## APIs
-
-### Bot
-
-- `static site(url: string): Site`
-
-  Create a site instance with Wiki's API URL.
 
 ### Site
 
